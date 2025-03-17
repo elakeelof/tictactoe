@@ -60,9 +60,7 @@ def result(board, action):
     res = copy.deepcopy(board)
     x = int(action[0])
     y = int(action[1])
-    print("X:", x)
-    print("y:", y)
-
+   
     if (res[x][y] != EMPTY ):
         raise NameError("Action not allowed")
     else:
@@ -116,7 +114,7 @@ def utility(board):
         return -1
     else:
         return 0
-
+    
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
@@ -128,10 +126,12 @@ def minimax(board):
 
     if (pl == X):
         func = MinValue
+        v = -sys.maxsize -1
     elif (pl == O):
         func = MaxValue
+        v = sys.maxsize
 
-    v = -sys.maxsize -1
+    
     bestAction = 0
     for action in actions(board):
         v = max(v, func(result(board, action)))
@@ -146,7 +146,7 @@ def MaxValue(board):
     v = -sys.maxsize -1
     for action in actions(board):
         v = max(v, MinValue(result(board, action)))
-        return v
+    return v
 
 
 def MinValue(board):
@@ -155,4 +155,4 @@ def MinValue(board):
     v = sys.maxsize
     for action in actions(board):
         v = min(v, MaxValue(result(board, action)))
-        return v
+    return v
