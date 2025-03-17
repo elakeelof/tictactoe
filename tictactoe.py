@@ -3,6 +3,8 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
+import sys
 
 X = "X"
 O = "O"
@@ -32,7 +34,7 @@ def player(board):
             elif (cell == O):
                 oCnt += 1
     
-    if (xCnt >= oCnt):
+    if (xCnt <= oCnt):
         return X
     else:
         return O
@@ -46,9 +48,9 @@ def actions(board):
     for idx, row in enumerate(board):
         for idy, cell in enumerate(row):
             if (cell == EMPTY):
-                action.add((idx,idy))
+                actions.add((idx,idy))
             
-    raise action
+    return actions
 
 
 def result(board, action):
@@ -56,10 +58,15 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     res = copy.deepcopy(board)
-    if (res(action[0], action[1]) != EMPTY ):
+    x = int(action[0])
+    y = int(action[1])
+    print("X:", x)
+    print("y:", y)
+
+    if (res[x][y] != EMPTY ):
         raise NameError("Action not allowed")
     else:
-       res[action[0]][action[1]] = player(res)
+       res[x][y]= player(res)
        return res
 
 
@@ -114,4 +121,38 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    if (terminal(board)):
+        return None
+    func = None
+    pl = player(board)
+
+    if (pl == X):
+        func = MinValue
+    elif (pl == O):
+        func = MaxValue
+
+    v = -sys.maxsize -1
+    bestAction = 0
+    for action in actions(board):
+        v = max(v, func(result(board, action)))
+        bestAction = action
+
+    return action
+
+def MaxValue(board):
+
+    if (terminal(board)):
+        return utility(board)
+    v = -sys.maxsize -1
+    for action in actions(board):
+        v = max(v, MinValue(result(board, action)))
+        return v
+
+
+def MinValue(board):
+    if (terminal(board)):
+        return utility(board)
+    v = sys.maxsize
+    for action in actions(board):
+        v = min(v, MaxValue(result(board, action)))
+        return v
